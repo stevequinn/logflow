@@ -17,9 +17,11 @@ services:
 
   api:
     build: .
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
     volumes:
-      - .:/code  <-- Essential for the script to be found
+      - .:/code
     depends_on:
       - postgres
       - redis
@@ -34,6 +36,7 @@ services:
       - postgres
       - redis
     volumes:
+      - .:/code
       - ./logs_storage:/logs # Mount host folder to save files
     environment:
       - DATABASE_URL=postgresql://user:password@postgres:5432/logflow_db

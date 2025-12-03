@@ -46,6 +46,6 @@ async def ingest_log(
 
 
 # Optional: Root endpoint for health check
-@app.get("/", include_in_schema=False)
+@app.get("/", include_in_schema=False, status_code=200)
 async def root():
     return {"service": "LogFlow", "status": "running"}

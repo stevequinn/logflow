@@ -32,7 +32,7 @@ def init():
 
             print("---------------------------------------------------------")
             print("SUCCESS: Default Project Created")
-            print(f"Project Name: default-project")
+            print("Project Name: default-project")
             print(f"API KEY:      {new_api_key}")
             print("---------------------------------------------------------")
             print("Use this key in your X-API-Key header.")
