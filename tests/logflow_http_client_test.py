@@ -8,7 +8,7 @@ load_dotenv()
 
 # --- Configuration ---
 API_KEY = os.getenv("LOGFLOW_API_KEY", "NO API KEY SET IN .env")
-API_URL = os.getenv("API_URL", "http://localhost:8000")
+API_URL = os.getenv("API_URL", "http://localhost:8100")
 
 
 def test_logflow_client():

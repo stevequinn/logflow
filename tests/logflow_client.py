@@ -18,7 +18,7 @@ class LogFlowClient:
         Initializes the LogFlow client.
 
         Args:
-            api_url (str): The base URL of the LogFlow API (e.g., "http://localhost:8000").
+            api_url (str): The base URL of the LogFlow API (e.g., "http://localhost:8100").
             api_key (str): The project's secret API Key for authentication.
         """
         self.ingestion_url = f"{api_url.rstrip('/')}/logs"
