@@ -22,8 +22,10 @@ services:
     command: uvicorn app.main:app --host 0.0.0.0 --port 8100 --reload
     ports:
       - "8100:8100"
-    volumes:
-      - .:/code
+    # volumes:
+    # Removing this for portainer as Dockerfile handles copying  src to
+    # /code and this mount overwrites that with ah empty dir.
+    # - .:/code
     depends_on:
       - postgres
       - redis
@@ -35,7 +37,9 @@ services:
     build: .
     command: celery -A worker.celery_app worker --loglevel=info
     volumes:
-      - .:/code
+      # Removing this for portainer as Dockerfile handles copying  src to
+      # /code and this mount overwrites that with ah empty dir.
+      # - .:/code
       - ./logs_storage:/logs # Assuming this dir exists on host
     depends_on:
       - postgres
