@@ -11,7 +11,7 @@ A lightweight, centralized logging ingestion service. It acts as a buffer betwee
 
 ### 3\. Functional Requirements
 
-  * **Ingestion:** REST API (POST `/logs`) accepting JSON logs.
+  * **Ingestion:** Fluent-Bit to REST API (POST `/logs`) accepting JSON array.
   * **Auth:** Authentication via `X-API-Key` header. Each client project has a unique key.
   * **Async Processing:** Logs are pushed to Redis immediately; Celery workers handle writing to storage.
   * **Storage Strategies:**
@@ -32,14 +32,14 @@ A lightweight, centralized logging ingestion service. It acts as a buffer betwee
 
 ```mermaid
 sequenceDiagram
-    participant Client as Client Service (Project A)
+    participant Client as Client Service writing to log file (Project A)
     participant API as FastAPI (LogFlow)
     participant DB_Read as DB (Auth Check)
     participant Redis as Redis Queue
     participant Worker as Celery Worker
     participant DB_Write as PostgreSQL (Logs)
     participant FS as File System
-
+     
     Client->>API: POST /logs (Header: X-API-Key)
     API->>DB_Read: Validate API Key
     alt Invalid Key

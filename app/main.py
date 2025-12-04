@@ -1,5 +1,5 @@
 # app/main.py
-from datetime import datetime
+from typing import List
 
 from fastapi import Depends, FastAPI
 
@@ -18,31 +18,25 @@ app = FastAPI(
 
 @app.post("/logs", status_code=202, summary="Ingest a Log Entry")
 async def ingest_log(
-    log_data: LogIngest,
+    log_data: List[LogIngest],
     # The get_project dependency authenticates the request via X-API-Key
     project: Project = Depends(get_project),
 ):
     """
-    Accepts a structured log payload, validates the API key, enriches the data,
+    Accepts a structured log payload list, validates the API key,
     and queues it for asynchronous processing by Celery.
     """
+    # print(f"Received {len(log_data)} logs for project: {project.name}")
 
-    # Convert Pydantic model to dict
-    payload = log_data.model_dump()
-
-    # Enrich payload with project info and ensure timestamp is ISO format for safe transport
-    payload["project_id"] = project.id
-    payload["project_name"] = project.name
-
-    # Ensure timestamp is ISO string format
-    if isinstance(payload["timestamp"], datetime):
-        payload["timestamp"] = payload["timestamp"].isoformat()
-
-    # Push to Celery using .delay() (fire-and-forget)
-    process_log.delay(payload)  # pyright: ignore[reportFunctionMemberAccess]
+    payload = [log.model_dump() for log in log_data]
+    task = process_log.delay(payload, project.id, project.name)  # pyright: ignore[reportFunctionMemberAccess]
 
     # Return 202 Accepted status
-    return {"status": "queued", "message": f"Log from {project.name} accepted."}
+    return {
+        "status": "queued",
+        "task_id": task.id,
+        "count": len(payload),
+    }
 
 
 # Optional: Root endpoint for health check

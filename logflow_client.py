@@ -31,12 +31,15 @@ class LogFlowClient:
         """
         Constructs the log payload and sends the POST request.
         """
-        payload = {
-            "level": level.upper(),
-            "message": message,
-            "timestamp": datetime.utcnow().isoformat() + "Z",  # Use Z for UTC marker
-            "metadata": metadata if metadata is not None else {},
-        }
+        payload = [
+            {
+                "level": level.upper(),
+                "message": message,
+                "timestamp": datetime.utcnow().isoformat()
+                + "Z",  # Use Z for UTC marker
+                "metadata": metadata if metadata is not None else {},
+            }
+        ]
 
         try:
             # Use a synchronous client request

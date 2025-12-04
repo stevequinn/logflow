@@ -7,7 +7,7 @@ from logflow_client import LogFlowClient
 load_dotenv()
 
 # --- Configuration ---
-API_KEY = os.getenv("TEST_API_KEY", "NO API KEY SET IN .env")
+API_KEY = os.getenv("LOGFLOW_API_KEY", "NO API KEY SET IN .env")
 API_URL = os.getenv("API_URL", "http://localhost:8000")
 
 
