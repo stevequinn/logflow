@@ -55,8 +55,6 @@ services:
       - ./logs:/filelogs
     depends_on:
       - api
-    env_file:
-      - .env
     environment:
       - LOGFLOW_API_KEY=${LOGFLOW_API_KEY}
 
