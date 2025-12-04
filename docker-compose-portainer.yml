@@ -1,0 +1,62 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: logflow_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379" # Exposed for local debugging
+
+  api:
+    build: .
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8100 --reload
+    ports:
+      - "8100:8100"
+    volumes:
+      - .:/code
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - DATABASE_URL=postgresql://user:password@postgres:5432/logflow_db
+      - REDIS_URL=redis://redis:6379/0
+
+  worker:
+    build: .
+    command: celery -A worker.celery_app worker --loglevel=info
+    volumes:
+      - .:/code
+      - ./logs_storage:/logs # Assuming this dir exists on host
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - DATABASE_URL=postgresql://user:password@postgres:5432/logflow_db
+      - REDIS_URL=redis://redis:6379/0
+      - ENABLE_DB_LOGGING=true
+      - ENABLE_FILE_LOGGING=true
+
+  fluent-bit:
+    image: fluent/fluent-bit:latest
+    container_name: fluent-bit
+    volumes:
+      - /opt/logflow/fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+      - /opt/logflow/fluent-bit/parsers.conf:/fluent-bit/etc/parsers.conf
+      - ./logs:/filelogs
+    depends_on:
+      - api
+    environment:
+      - LOGFLOW_API_KEY=${LOGFLOW_API_KEY}
+
+volumes:
+  pgdata:
