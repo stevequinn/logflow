@@ -2,7 +2,7 @@ import os
 
 from dotenv import load_dotenv
 
-from logflow_client import LogFlowClient
+from .logflow_client import LogFlowClient
 
 load_dotenv()
 
