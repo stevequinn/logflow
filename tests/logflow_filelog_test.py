@@ -4,7 +4,7 @@ from pathlib import Path
 from sqlalchemy.orm.path_registry import log
 
 # Directories
-BASE_DIR = Path(__file__).parent
+BASE_DIR = Path(__file__).parent.parent
 LOG_FILE = BASE_DIR / "logs" / "app.log"
 
 # Logging configuration
@@ -27,7 +27,7 @@ def main():
 
     logger = logging.getLogger(__name__)
 
-    logcount = 20
+    logcount = 20000
     for i in range(logcount):
         logger.info(f"New Processing info {i + 1}/{logcount}")
         logger.warning(f"New Processing warning {i + 1}/{logcount}")
